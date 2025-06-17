@@ -28,6 +28,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
+  <script>
+    // Wait for Flutter to initialize before sending message
+    window.addEventListener('load', function() {
+      if (window.FlutterChannel) {
+        FlutterChannel.postMessage("Hello from Web!");
+      }
+    });
+  </script>
 
   <title>qr_code_andr</title>
   <link rel="manifest" href="manifest.json">

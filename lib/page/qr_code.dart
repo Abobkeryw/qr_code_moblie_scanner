@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_andr/class/mobile_scanner_simple.dart';
+import 'package:mobile_scanner/mobile_scanner.dart'; // Needed
+import 'package:image_picker/image_picker.dart'; // Needed
+import 'package:qr_code_andr/widgets/mobile_scanner_simple.dart';
+import 'package:qr_code_andr/page/result_page.dart';
 
 class QRCodePage extends StatefulWidget {
   const QRCodePage({super.key});
@@ -9,6 +12,33 @@ class QRCodePage extends StatefulWidget {
 }
 
 class _QRCodePageState extends State<QRCodePage> {
+  final MobileScannerController _controller = MobileScannerController();
+
+  void _onQRDetect(String code) {
+    print("Scanned: $code");
+    Navigator.pushNamed(context, '/results'); // Update if needed
+  }
+
+  Future<void> _toggleFlash() async {
+    _controller.toggleTorch();
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final result = await _controller.analyzeImage(image.path);
+      if (result != null) {
+        _onQRDetect(result.barcodes.isNotEmpty
+            ? (result.barcodes.first.rawValue ?? 'Unknown QR')
+            : 'Unknown QR');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No QR code found in the image')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +59,12 @@ class _QRCodePageState extends State<QRCodePage> {
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 10),
-            const Expanded(
-                child: MobileScannerSimple(),
+            Expanded(
+              child: MobileScannerSimple(
+                onDetect: _onQRDetect,
+                controller: _controller,
               ),
+            ),
             const SizedBox(height: 10),
             Text(
               'Scanning Code...',
@@ -41,17 +74,18 @@ class _QRCodePageState extends State<QRCodePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _bottomIcon('images/Group 5.png', 'Image tapped!'),
+                _bottomIcon('images/Flash_light.png', _toggleFlash),
                 const SizedBox(width: 10),
-                _bottomIcon('images/Flash_light.png', 'Flash tapped!'),
-                const SizedBox(width: 10),
-                _bottomIcon('images/Gallary.png', 'Gallery tapped!'),
+                _bottomIcon('images/Gallary.png', _pickImageFromGallery),
               ],
             ),
             const SizedBox(height: 20),
             MaterialButton(
               onPressed: () {
-                print('Place Camera Code tapped!');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ResultPage()));
               },
               height: 60,
               minWidth: 370,
@@ -65,16 +99,15 @@ class _QRCodePageState extends State<QRCodePage> {
               ),
             ),
             const SizedBox(height: 20),
-            // const Spacer(),
           ],
         ),
       ),
     );
   }
 
-  Widget _bottomIcon(String path, String message) {
+  Widget _bottomIcon(String path, VoidCallback onTap) {
     return GestureDetector(
-      onTap: () => print(message),
+      onTap: onTap,
       child: Image.asset(
         path,
         height: 25,

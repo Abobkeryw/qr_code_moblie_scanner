@@ -30,6 +30,7 @@ environment:
 dependencies:
   cloud_firestore: ^5.6.7
   cupertino_icons: ^1.0.6
+  device_preview: ^1.2.0
   equatable: ^2.0.7
   firebase_auth: ^5.5.3
   firebase_core: ^3.13.0
@@ -37,15 +38,12 @@ dependencies:
     sdk: flutter
   google_mlkit_barcode_scanning: ^0.14.1
   image_picker: ^1.1.2
+  intl: ^0.20.2
   mobile_scanner: ^7.0.0
+  shared_preferences: ^2.5.3
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter

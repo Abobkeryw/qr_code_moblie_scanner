@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qr_code_andr/page/webview_page.dart';
+import 'package:qr_code_andr/main.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,7 +16,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   // Removed _phoneController
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _obscureText = true;
   bool _isRegistering = false;
@@ -27,7 +30,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -97,7 +101,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: buildInputDecoration('Enter your email'),
-                  validator: (value) => value != null && value.contains('@') ? null : 'Enter valid email',
+                  validator: (value) => value != null && value.contains('@')
+                      ? null
+                      : 'Enter valid email',
                 ),
                 const SizedBox(height: 16),
 
@@ -108,12 +114,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration: buildInputDecoration(
                     'Enter your password',
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscureText = !_obscureText),
+                      icon: Icon(_obscureText
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () =>
+                          setState(() => _obscureText = !_obscureText),
                     ),
                   ),
-                  validator: (value) =>
-                      value != null && value.length >= 6 ? null : 'Password must be at least 6 characters',
+                  validator: (value) => value != null && value.length >= 6
+                      ? null
+                      : 'Password must be at least 6 characters',
                 ),
                 const SizedBox(height: 16),
 
@@ -151,6 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                   ),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
