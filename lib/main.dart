@@ -10,10 +10,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode, // Set to true to enable device preview
-      builder: (context) => const MyApp(),
-    ),
+     const MyApp(),
   );
 }
 
@@ -22,14 +19,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
