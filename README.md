@@ -1,16 +1,18 @@
-# qr_code_andr
+Here's a more descriptive and professional version for your GitHub `README.md` under the repository `# qr_code_andr`:
 
-A new Flutter project.
+---
+
+# QR Code Moblie Scannre
+
+A Flutter-based mobile application that enables QR code scanning and image picking functionality. The project is designed as a modular and scalable starting point for apps that require camera access, gallery integration, and QR code processing on Android.
+
+## Features
+
+* 📷 Scan QR codes using the device camera
+* 🖼️ Pick images from the device gallery
+* 🔧 Clean and extensible Flutter project structure
+* ✅ Ready for integration with Firebase or other backend services
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project is a starting point for building Flutter apps that need image handling and QR code functionality.
