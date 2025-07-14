@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '/page/forgot_password.dart';
-import '/page/qr_code.dart';
-import '/page/register_screen.dart';
+import '/routes/route_name.dart';
+import '/services/login_service.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -23,58 +22,13 @@ class _MyHomePageState extends State<MyHomePage> {
         password: _passwordController.text.trim(),
       );
 
-      // Show success dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green),
-              SizedBox(width: 10),
-              Text(
-                "Login Successful",
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          content: const Text(
-            "Welcome back!",
-            style: TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-          actionsAlignment: MainAxisAlignment.end,
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context); // close alert
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) =>  QRCodePage()
-                  ),
-                );
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
-      );
+      // Save login state
+      await LoginService.saveLoginState(_emailController.text.trim());
+
+      // Navigate directly to QR scanner after successful login
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, RouteName.qrScanner);
+      }
     } on FirebaseAuthException catch (e) {
       String message = "Login failed";
       if (e.code == 'user-not-found') {
@@ -147,12 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ForgotPasswordScreen(),
-                            ),
-                          );
+                                                  Navigator.pushNamed(context, RouteName.forgotPassword);
                         }, // Add forgot password navigation
                         child: const Text(
                           'Forgot Password?',
@@ -190,11 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RegisterScreen(),
-                                ));
+                            Navigator.pushNamed(context, RouteName.register);
                           },
                           child: const Text(
                             'Sign Up',

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import '../services/qr_code_service.dart';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({Key? key}) : super(key: key);
@@ -13,6 +12,7 @@ class _ResultPageState extends State<ResultPage> {
   List<Map<String, dynamic>> qrCodes = [];
   Map<String, dynamic>? lastDeletedCode;
   int? lastDeletedIndex;
+  final QrCodeService _qrCodeService = QrCodeService();
 
   @override
   void initState() {
@@ -21,18 +21,10 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   Future<void> loadSavedCodes() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedList = prefs.getStringList('qr_codes') ?? [];
+    final codes = await _qrCodeService.getAllQrCodes();
     setState(() {
-      qrCodes = savedList.map((item) => json.decode(item) as Map<String, dynamic>).toList();
-      qrCodes.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
+      qrCodes = codes;
     });
-  }
-
-  Future<void> saveCodes() async {
-    final prefs = await SharedPreferences.getInstance();
-    final encodedList = qrCodes.map((e) => json.encode(e)).toList();
-    await prefs.setStringList('qr_codes', encodedList);
   }
 
   Future<void> confirmDelete(int index) async {
@@ -53,11 +45,12 @@ class _ResultPageState extends State<ResultPage> {
     if (confirm == true) {
       lastDeletedCode = qrCodes[index];
       lastDeletedIndex = index;
+      final qrCodeId = qrCodes[index]['id'] as int;
 
       setState(() {
         qrCodes.removeAt(index);
       });
-      await saveCodes();
+      await _qrCodeService.deleteQrCode(qrCodeId);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -66,10 +59,10 @@ class _ResultPageState extends State<ResultPage> {
             label: 'Undo',
             onPressed: () async {
               if (lastDeletedCode != null && lastDeletedIndex != null) {
-                setState(() {
-                  qrCodes.insert(lastDeletedIndex!, lastDeletedCode!);
-                });
-                await saveCodes();
+                // Re-insert the QR code into the database
+                await _qrCodeService.saveQrCode(lastDeletedCode!['value']);
+                // Reload the list to get the updated data
+                await loadSavedCodes();
               }
             },
           ),
@@ -98,7 +91,7 @@ class _ResultPageState extends State<ResultPage> {
       setState(() {
         qrCodes.clear();
       });
-      await saveCodes();
+      await _qrCodeService.deleteAllQrCodes();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All QR Codes cleared')),
       );
@@ -115,14 +108,23 @@ class _ResultPageState extends State<ResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Scanning Result',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            const Text(
-              'Scanning Result',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const SizedBox(height: 10),
             const SizedBox(height: 10),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0),
