@@ -1,7 +1,3 @@
-Here's a more descriptive and professional version for your GitHub `README.md` under the repository `# qr_code_andr`:
-
----
-
 # QR Code Moblie Scannre
 
 A Flutter-based mobile application that enables QR code scanning and image picking functionality. The project is designed as a modular and scalable starting point for apps that require camera access, gallery integration, and QR code processing on Android.
